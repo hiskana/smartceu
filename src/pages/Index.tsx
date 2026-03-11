@@ -18,10 +18,10 @@ export default function Index() {
               Continuing Education, Reimagined
             </span>
 
-            <h1 className="display-massive text-5xl md:text-7xl lg:text-[6rem] mb-8 text-white">
-              Perfection,
+            <h1 className="display-massive text-5xl md:text-7xl lg:text-[6rem] mb-8 text-white leading-[1.05]">
+              Modern CE
               <br />
-              <span className="text-primary">Automated.</span>
+              Made <span className="text-primary">Easy.</span>
             </h1>
 
             <p className="text-base md:text-lg font-light leading-relaxed max-w-lg mx-auto mb-12 text-white/60">
