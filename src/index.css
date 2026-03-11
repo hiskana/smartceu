@@ -1,70 +1,67 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 40 33% 97%;
+    --background: 43 76% 63%;
     --foreground: 0 0% 0%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
-    --primary: 330 100% 55%;
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 50 100% 50%;
+    --secondary: 43 76% 63%;
     --secondary-foreground: 0 0% 0%;
-    --muted: 40 20% 92%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 185 80% 50%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 84% 50%;
+    --muted: 43 40% 80%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 0%;
     --input: 0 0% 0%;
-    --ring: 330 100% 55%;
+    --ring: 0 0% 0%;
     --radius: 0px;
-    --sidebar-background: 40 33% 95%;
+    --sidebar-background: 43 76% 60%;
     --sidebar-foreground: 0 0% 0%;
-    --sidebar-primary: 330 100% 55%;
+    --sidebar-primary: 0 0% 0%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 50 100% 50%;
-    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-accent: 0 72% 51%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 0%;
-    --sidebar-ring: 330 100% 55%;
+    --sidebar-ring: 0 0% 0%;
   }
 
-  /* No dark mode - this is a light-only design system */
   .dark {
-    --background: 40 33% 97%;
+    --background: 43 76% 63%;
     --foreground: 0 0% 0%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
-    --primary: 330 100% 55%;
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 50 100% 50%;
+    --secondary: 43 76% 63%;
     --secondary-foreground: 0 0% 0%;
-    --muted: 40 20% 92%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 185 80% 50%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 84% 50%;
+    --muted: 43 40% 80%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 0%;
     --input: 0 0% 0%;
-    --ring: 330 100% 55%;
-    --sidebar-background: 40 33% 95%;
+    --ring: 0 0% 0%;
+    --sidebar-background: 43 76% 60%;
     --sidebar-foreground: 0 0% 0%;
-    --sidebar-primary: 330 100% 55%;
+    --sidebar-primary: 0 0% 0%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 50 100% 50%;
-    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-accent: 0 72% 51%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 0%;
-    --sidebar-ring: 330 100% 55%;
+    --sidebar-ring: 0 0% 0%;
   }
 }
 
@@ -75,57 +72,88 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Space Grotesk', sans-serif;
-    background-image:
-      linear-gradient(hsl(0 0% 0% / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(0 0% 0% / 0.04) 1px, transparent 1px);
-    background-size: 24px 24px;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-  }
-  code, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
   }
 }
 
 @layer components {
-  .brutalist-card {
-    @apply bg-card border-[3px] border-foreground;
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+  /* Editorial card — white paper pinned on yellow */
+  .editorial-card {
+    @apply bg-card border-[2px] border-foreground relative;
   }
-  .brutalist-card-pink {
-    @apply bg-primary border-[3px] border-foreground text-primary-foreground;
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+
+  /* Red tape accent on top corners */
+  .editorial-card-taped::before,
+  .editorial-card-taped::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 14px;
+    background: hsl(var(--accent));
+    top: -7px;
+    z-index: 10;
+    border: 1px solid hsl(var(--foreground));
   }
-  .brutalist-card-yellow {
-    @apply bg-secondary border-[3px] border-foreground text-secondary-foreground;
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+  .editorial-card-taped::before {
+    left: 12px;
+    transform: rotate(-8deg);
   }
-  .brutalist-card-cyan {
-    @apply bg-accent border-[3px] border-foreground text-accent-foreground;
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+  .editorial-card-taped::after {
+    right: 12px;
+    transform: rotate(6deg);
   }
-  .brutalist-btn {
-    @apply border-[3px] border-foreground font-bold uppercase tracking-wide;
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
-    transition: transform 0.1s, box-shadow 0.1s;
+
+  /* Black button */
+  .editorial-btn {
+    @apply bg-primary text-primary-foreground border-[2px] border-foreground font-bold uppercase tracking-wider;
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.08em;
+    transition: transform 0.1s;
   }
-  .brutalist-btn:hover {
+  .editorial-btn:hover {
+    transform: translate(1px, 1px);
+  }
+  .editorial-btn:active {
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px hsl(var(--foreground));
   }
-  .brutalist-btn:active {
-    transform: translate(4px, 4px);
-    box-shadow: 0px 0px 0px 0px hsl(var(--foreground));
+
+  /* White sticker button with red text */
+  .sticker-btn {
+    @apply bg-card text-accent border-[2px] border-foreground font-bold uppercase;
+    font-family: 'Anton', sans-serif;
+    transform: rotate(-2deg);
+    transition: transform 0.15s;
   }
-  .brutalist-divider {
-    @apply border-t-[3px] border-foreground;
+  .sticker-btn:hover {
+    transform: rotate(0deg) scale(1.02);
   }
-  .pixel-text {
-    font-family: 'JetBrains Mono', monospace;
-    @apply text-xs uppercase tracking-widest;
+
+  /* Handwritten annotation in red */
+  .annotation {
+    font-family: 'Caveat', cursive;
+    @apply text-accent;
   }
+
+  /* Section divider */
+  .editorial-divider {
+    @apply border-t-[2px] border-foreground;
+  }
+
+  /* Condensed sans headers */
+  .header-condensed {
+    font-family: 'Anton', sans-serif;
+    @apply uppercase tracking-wide;
+  }
+
+  /* Red star sticker */
+  .red-star {
+    @apply text-accent inline-block;
+    filter: drop-shadow(1px 1px 0px hsl(var(--foreground)));
+  }
+
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
