@@ -1,4 +1,4 @@
-import { User, Shield, Bell, Moon, LogOut, ChevronRight, Stethoscope } from "lucide-react";
+import { User, Shield, Bell, Moon, LogOut, ArrowRight, Stethoscope } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 
@@ -12,129 +12,125 @@ const mockUser = {
 
 export default function Profile() {
   return (
-    <div className="min-h-screen py-8 md:py-12">
-      <div className="container max-w-lg">
+    <div className="min-h-screen py-16 md:py-24">
+      <div className="container max-w-2xl">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mb-20"
         >
-          <h1 className="font-display text-5xl md:text-6xl font-black italic mb-2">Profile</h1>
-          <span className="annotation text-xl inline-block rotate-[-2deg]">
-            ★ manage your account
-          </span>
+          <span className="section-marker block mb-6">Account</span>
+          <h1 className="display-massive text-6xl md:text-8xl">
+            Profile.
+          </h1>
         </motion.div>
 
-        {/* User Info Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+        {/* User Info */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="editorial-card editorial-card-taped p-6 pt-10 mb-6"
+          className="mb-16"
         >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-primary border-[2px] border-foreground flex items-center justify-center">
-              <User className="w-8 h-8 text-primary-foreground" />
-            </div>
-            <div>
-              <h2 className="header-condensed text-lg">{mockUser.name}</h2>
-              <span className="annotation text-base">{mockUser.email}</span>
+          <span className="section-marker block mb-6">01. Identity</span>
+          <div className="border-t border-foreground/10">
+            <div className="py-6 grid grid-cols-[auto_1fr] gap-6 items-center">
+              <div className="w-14 h-14 bg-primary flex items-center justify-center">
+                <User className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold tracking-tight">{mockUser.name}</h2>
+                <span className="meta-label">{mockUser.email}</span>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 bg-muted border-[2px] border-foreground p-3">
-              <Stethoscope className="w-5 h-5" />
-              <div>
-                <p className="text-sm font-bold font-body">{mockUser.licenseType}</p>
-                <span className="annotation text-sm">{mockUser.licenseNumber}</span>
+          <div className="border-t border-foreground/5">
+            {[
+              { icon: Stethoscope, label: mockUser.licenseType, detail: mockUser.licenseNumber },
+              { icon: Shield, label: mockUser.state, detail: "Licensed State" },
+            ].map((item) => (
+              <div key={item.label} className="py-4 grid grid-cols-[auto_1fr] gap-4 items-center border-b border-foreground/5">
+                <item.icon className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div>
+                  <p className="text-sm font-medium">{item.label}</p>
+                  <span className="meta-label">{item.detail}</span>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3 bg-muted border-[2px] border-foreground p-3">
-              <Shield className="w-5 h-5" />
-              <div>
-                <p className="text-sm font-bold font-body">{mockUser.state}</p>
-                <span className="annotation text-sm">Licensed State</span>
-              </div>
-            </div>
+            ))}
           </div>
-        </motion.div>
+        </motion.section>
 
         {/* Settings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="editorial-card divide-y-[2px] divide-foreground"
+          className="mb-16"
         >
-          {/* Notifications */}
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-accent border-[2px] border-foreground flex items-center justify-center">
-                <Bell className="w-5 h-5 text-accent-foreground" />
+          <span className="section-marker block mb-6">02. Settings</span>
+          <div className="border-t border-foreground/10">
+            {/* Notifications */}
+            <div className="flex items-center justify-between py-5 border-b border-foreground/5">
+              <div className="flex items-center gap-4">
+                <Bell className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div>
+                  <p className="text-sm font-medium">Notifications</p>
+                  <span className="meta-label">Course reminders & updates</span>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-bold font-body uppercase">Notifications</p>
-                <span className="annotation text-sm">course reminders & updates</span>
-              </div>
+              <Switch defaultChecked />
             </div>
-            <Switch defaultChecked />
-          </div>
 
-          {/* Dark Mode */}
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary border-[2px] border-foreground flex items-center justify-center">
-                <Moon className="w-5 h-5 text-primary-foreground" />
+            {/* Dark Mode */}
+            <div className="flex items-center justify-between py-5 border-b border-foreground/5">
+              <div className="flex items-center gap-4">
+                <Moon className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div>
+                  <p className="text-sm font-medium">Dark Mode</p>
+                  <span className="meta-label">Night-shift optimized</span>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-bold font-body uppercase">Dark Mode</p>
-                <span className="annotation text-sm">night-shift friendly</span>
-              </div>
+              <Switch />
             </div>
-            <Switch />
-          </div>
 
-          {/* License Settings */}
-          <button className="flex items-center justify-between p-4 w-full text-left hover:bg-muted transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-muted border-[2px] border-foreground flex items-center justify-center">
-                <Shield className="w-5 h-5" />
+            {/* License Settings */}
+            <button className="flex items-center justify-between py-5 w-full text-left hover:bg-muted/30 transition-colors border-b border-foreground/5">
+              <div className="flex items-center gap-4">
+                <Shield className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div>
+                  <p className="text-sm font-medium">License Settings</p>
+                  <span className="meta-label">Update license information</span>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-bold font-body uppercase">License Settings</p>
-                <span className="annotation text-sm">update your license info</span>
-              </div>
-            </div>
-            <div className="bg-primary text-primary-foreground p-1 border-[2px] border-foreground">
-              <ChevronRight className="w-5 h-5" />
-            </div>
-          </button>
-        </motion.div>
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </div>
+        </motion.section>
 
         {/* Logout */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6"
+          className="mb-12"
         >
-          <button className="editorial-btn bg-accent text-accent-foreground w-full py-3 text-sm inline-flex items-center justify-center gap-2">
+          <button className="btn-primary w-full inline-flex items-center justify-center gap-2">
             <LogOut className="w-4 h-4" />
-            Log Out
+            Sign Out
           </button>
         </motion.div>
 
-        {/* App Info */}
+        {/* Footer info */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-8 text-center"
+          className="text-center"
         >
-          <p className="font-body text-xs text-muted-foreground">SmartCEU v1.0.0</p>
-          <span className="annotation text-sm">BRN Provider #12345 | BVNPT Provider #67890</span>
+          <p className="meta-label">SmartCEU v1.0.0</p>
+          <p className="meta-label mt-1">BRN Provider #12345 — BVNPT Provider #67890</p>
         </motion.div>
       </div>
     </div>

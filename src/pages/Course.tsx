@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play, Pause, ChevronLeft, Check, X, Award } from "lucide-react";
+import { Play, Pause, ArrowLeft, Check, X, Award } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { courses } from "@/data/courses";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
@@ -18,7 +18,7 @@ export default function Course() {
   const [completed, setCompleted] = useState(false);
 
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-8, 8]);
+  const rotate = useTransform(x, [-200, 200], [-4, 4]);
   const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
   const leftGlow = useTransform(x, [-200, 0], [1, 0]);
   const rightGlow = useTransform(x, [0, 200], [0, 1]);
@@ -27,9 +27,10 @@ export default function Course() {
   if (!course) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="editorial-card p-8">
-          <h2 className="font-display text-2xl font-black italic">Course not found.</h2>
-          <span className="annotation text-lg">← check the catalog</span>
+        <div className="text-center">
+          <span className="section-marker block mb-4">Error</span>
+          <h2 className="text-2xl font-black mb-2">Course Not Found</h2>
+          <p className="text-sm text-muted-foreground">Return to the catalog.</p>
         </div>
       </div>
     );
@@ -61,9 +62,7 @@ export default function Course() {
 
   const handleGenerateCertificate = () => {
     setCompleted(true);
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 3000);
+    setTimeout(() => navigate("/dashboard"), 3000);
   };
 
   if (completed) {
@@ -73,27 +72,18 @@ export default function Course() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
-          className="mb-6"
+          className="mb-8"
         >
-          <div className="w-24 h-24 bg-accent border-[2px] border-foreground flex items-center justify-center">
-            <Award className="w-12 h-12 text-accent-foreground" />
-          </div>
+          <Award className="w-16 h-16" strokeWidth={1} />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="editorial-card editorial-card-taped p-8 pt-10"
         >
-          <h1 className="font-display text-3xl font-black italic mb-2">
-            Course Complete! 🎉
-          </h1>
-          <span className="annotation text-xl inline-block rotate-[-2deg]">
-            ★ certificate generated successfully
-          </span>
-          <p className="text-sm font-body text-muted-foreground mt-4">
-            Redirecting to dashboard...
-          </p>
+          <span className="section-marker block mb-4">Complete</span>
+          <h1 className="display-massive text-4xl mb-4">Certificate Generated</h1>
+          <p className="text-sm text-muted-foreground">Redirecting to progress...</p>
         </motion.div>
       </div>
     );
@@ -101,24 +91,24 @@ export default function Course() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-primary text-primary-foreground border-b-[2px] border-foreground px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 border-[2px] border-primary-foreground/40 hover:bg-card hover:text-foreground transition-colors">
-          <ChevronLeft className="w-5 h-5" />
+      {/* Header — minimal */}
+      <header className="sticky top-0 z-40 bg-background border-b border-foreground/10 px-4 py-3 flex items-center gap-4">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-muted transition-colors">
+          <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="flex-1 min-w-0">
-          <h1 className="header-condensed text-sm truncate">{course.title}</h1>
-          <span className="annotation text-sm text-accent">Module {currentModule} of {course.modules}</span>
+          <h1 className="text-xs font-semibold tracking-tight truncate">{course.title}</h1>
+          <span className="meta-label">Module {currentModule} of {course.modules}</span>
         </div>
       </header>
 
-      {/* Progress bar */}
-      <div className="h-2 bg-muted border-b-[2px] border-foreground">
-        <div className="h-full bg-accent transition-all" style={{ width: `${progress}%` }} />
+      {/* Progress — thin line */}
+      <div className="h-px bg-muted">
+        <div className="h-full bg-foreground transition-all" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* Video Player */}
-      <div className="relative aspect-[9/14] max-h-[55vh] bg-muted flex items-center justify-center border-b-[2px] border-foreground">
+      {/* Video Player — clean */}
+      <div className="relative aspect-[9/14] max-h-[55vh] bg-muted flex items-center justify-center border-b border-foreground/10">
         <span className="text-7xl">{course.thumbnail}</span>
 
         <button
@@ -128,49 +118,49 @@ export default function Course() {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: isPlaying ? 0 : 1 }}
-            className="w-16 h-16 bg-primary border-[2px] border-foreground flex items-center justify-center"
+            className="w-16 h-16 bg-primary flex items-center justify-center"
           >
             {isPlaying ? (
-              <Pause className="w-7 h-7 text-primary-foreground" fill="currentColor" />
+              <Pause className="w-6 h-6 text-primary-foreground" fill="currentColor" />
             ) : (
-              <Play className="w-7 h-7 text-primary-foreground ml-1" fill="currentColor" />
+              <Play className="w-6 h-6 text-primary-foreground ml-1" fill="currentColor" />
             )}
           </motion.div>
         </button>
 
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-card border-[2px] border-foreground p-3">
-            <p className="text-sm font-bold header-condensed">Understanding Unconscious Bias</p>
-            <span className="annotation text-sm">how implicit biases affect patient care</span>
+          <div className="bg-background/90 backdrop-blur-sm p-3 border border-foreground/10">
+            <p className="text-xs font-semibold tracking-tight">Understanding Unconscious Bias</p>
+            <span className="meta-label">How implicit biases affect patient care</span>
           </div>
         </div>
       </div>
 
       {/* Content area */}
-      <div className="flex-1 p-4 flex flex-col">
+      <div className="flex-1 p-6 flex flex-col">
         {!showAttestation ? (
           <>
-            {/* Scenario Swipe Component */}
-            <div className="mb-4 editorial-divider pb-3">
-              <h2 className="header-condensed text-lg">Clinical Scenario Check</h2>
-              <span className="annotation text-base inline-block rotate-[-1deg]">
-                swipe right = correct ★ | swipe left = incorrect
-              </span>
+            {/* Scenario section */}
+            <div className="mb-6">
+              <span className="section-marker block mb-2">Clinical Scenario</span>
+              <p className="text-xs text-muted-foreground">
+                Swipe right for correct action — swipe left for incorrect
+              </p>
             </div>
 
             <div ref={constraintRef} className="relative flex-1 flex items-center justify-center min-h-[200px]">
               {/* Direction indicators */}
               <motion.div
                 style={{ opacity: rightGlow }}
-                className="absolute inset-y-0 right-0 w-20 bg-accent/20 border-l-[2px] border-foreground pointer-events-none flex items-center justify-center"
+                className="absolute inset-y-0 right-0 w-16 border-l border-foreground/10 pointer-events-none flex items-center justify-center"
               >
-                <Check className="w-8 h-8 text-accent" />
+                <Check className="w-5 h-5 text-foreground" />
               </motion.div>
               <motion.div
                 style={{ opacity: leftGlow }}
-                className="absolute inset-y-0 left-0 w-20 bg-foreground/10 border-r-[2px] border-foreground pointer-events-none flex items-center justify-center"
+                className="absolute inset-y-0 left-0 w-16 border-r border-foreground/10 pointer-events-none flex items-center justify-center"
               >
-                <X className="w-8 h-8 text-foreground" />
+                <X className="w-5 h-5 text-foreground" />
               </motion.div>
 
               {/* Swipeable card */}
@@ -180,60 +170,50 @@ export default function Course() {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.7}
                 onDragEnd={handleDragEnd}
-                className="editorial-card editorial-card-taped p-5 pt-8 w-full max-w-sm cursor-grab active:cursor-grabbing"
+                className="bg-card border border-foreground/10 p-6 w-full max-w-sm cursor-grab active:cursor-grabbing"
               >
-                <span className="annotation text-sm inline-block rotate-[-2deg] mb-2">
-                  scenario {scenarioIndex + 1} of {course.scenarios.length}
+                <span className="meta-label block mb-4">
+                  {scenarioIndex + 1} / {course.scenarios.length}
                 </span>
-                <p className="text-sm leading-relaxed font-body">{scenario?.situation}</p>
+                <p className="text-sm font-light leading-[1.8]">{scenario?.situation}</p>
               </motion.div>
             </div>
 
             <button
               onClick={() => setShowAttestation(true)}
-              className="text-sm text-muted-foreground underline mt-4 text-center font-body"
+              className="text-xs text-muted-foreground underline mt-6 text-center"
             >
-              Skip to completion (demo)
+              Skip to completion
             </button>
           </>
         ) : (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex-1 flex flex-col justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full"
           >
-            <div className="editorial-card editorial-card-taped p-6 pt-10">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-accent border-[2px] border-foreground flex items-center justify-center">
-                  <Award className="w-6 h-6 text-accent-foreground" />
-                </div>
-                <div>
-                  <h2 className="header-condensed text-lg">Course Completed!</h2>
-                  <span className="annotation text-base">one final step ★</span>
-                </div>
-              </div>
+            <span className="section-marker block mb-6">Final Attestation</span>
 
-              <div className="space-y-4">
-                <label className="flex items-start gap-3 cursor-pointer bg-muted border-[2px] border-foreground p-3">
-                  <Checkbox
-                    checked={attested}
-                    onCheckedChange={(checked) => setAttested(checked === true)}
-                    className="mt-0.5 border-[2px] border-foreground"
-                  />
-                  <span className="text-sm leading-relaxed font-body">
-                    I legally attest that I have completed this educational material and understand the content
-                    presented. I confirm that I personally participated in this learning activity.
-                  </span>
-                </label>
+            <div className="space-y-6">
+              <label className="flex items-start gap-3 cursor-pointer border border-foreground/10 p-4 hover:bg-muted/30 transition-colors">
+                <Checkbox
+                  checked={attested}
+                  onCheckedChange={(checked) => setAttested(checked === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm font-light leading-[1.8]">
+                  I legally attest that I have completed this educational material and understand the content
+                  presented. I confirm that I personally participated in this learning activity.
+                </span>
+              </label>
 
-                <button
-                  onClick={handleGenerateCertificate}
-                  disabled={!attested}
-                  className="editorial-btn w-full py-4 text-base inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Generate Certificate
-                </button>
-              </div>
+              <button
+                onClick={handleGenerateCertificate}
+                disabled={!attested}
+                className="btn-primary w-full disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Generate Certificate
+              </button>
             </div>
           </motion.div>
         )}
