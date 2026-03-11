@@ -19,7 +19,10 @@ const App = () => {
   const [showSplash, setShowSplash] = useState(() => {
     return !localStorage.getItem("smartceu_visited");
   });
-  const handleSplashComplete = useCallback(() => setShowSplash(false), []);
+  const handleSplashComplete = useCallback(() => {
+    localStorage.setItem("smartceu_visited", "true");
+    setShowSplash(false);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
