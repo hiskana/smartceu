@@ -17,9 +17,9 @@ export default function Layout() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Desktop nav — premium floating bar */}
       <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container flex items-center justify-between h-16">
+        <div className="container flex items-center justify-between h-20">
           <NavLink to="/" className="flex items-center gap-2">
-            <img src={smartceuLogo} alt="SmartCEU" className="h-10 w-auto max-w-[180px]" />
+            <img src={smartceuLogo} alt="SmartCEU" className="h-12 w-auto" />
           </NavLink>
           <nav className="flex items-center gap-1 bg-secondary/60 backdrop-blur-xl rounded-full px-1.5 py-1.5">
             {navItems.map(({ path, label }) => (
