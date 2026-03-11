@@ -14,14 +14,12 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Desktop top nav — thick bordered */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-card border-b-[3px] border-foreground">
+      {/* Desktop top nav — black bar */}
+      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-primary border-b-[2px] border-foreground">
         <div className="container flex items-center justify-between h-14">
-          <NavLink to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary border-[2px] border-foreground flex items-center justify-center" style={{ boxShadow: '2px 2px 0px 0px hsl(0 0% 0%)' }}>
-              <span className="text-sm font-bold text-primary-foreground font-mono">{'/>'}</span>
-            </div>
-            <span className="font-display font-bold text-xl">SmartCEU</span>
+          <NavLink to="/" className="flex items-center gap-3">
+            <span className="font-display text-2xl font-black text-primary-foreground italic">SmartCEU</span>
+            <span className="annotation text-lg text-accent rotate-[-3deg]">★ for nurses</span>
           </NavLink>
           <nav className="flex items-center gap-0">
             {navItems.map(({ path, label }) => (
@@ -29,13 +27,12 @@ export default function Layout() {
                 key={path}
                 to={path}
                 className={({ isActive }) =>
-                  `px-4 py-2 text-sm font-bold uppercase tracking-wide border-[2px] border-foreground transition-all ${
+                  `px-5 py-2 header-condensed text-sm border-l-[2px] border-foreground transition-all ${
                     isActive
                       ? "bg-accent text-accent-foreground"
-                      : "bg-card text-foreground hover:bg-secondary hover:text-secondary-foreground"
+                      : "bg-primary text-primary-foreground hover:bg-card hover:text-foreground"
                   }`
                 }
-                style={{ marginLeft: '-2px' }}
               >
                 {label}
               </NavLink>
@@ -59,8 +56,8 @@ export default function Layout() {
         </AnimatePresence>
       </main>
 
-      {/* Mobile bottom nav — thick bordered */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t-[3px] border-foreground">
+      {/* Mobile bottom nav — black bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-primary border-t-[2px] border-foreground">
         <div className="flex items-center justify-around h-16">
           {navItems.map(({ path, label, icon: Icon }) => (
             <NavLink
@@ -69,18 +66,17 @@ export default function Layout() {
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 transition-all ${
                   isActive
-                    ? "text-foreground"
-                    : "text-muted-foreground"
+                    ? "text-accent"
+                    : "text-primary-foreground"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className={`p-1.5 border-[2px] transition-all ${isActive ? "border-foreground bg-accent" : "border-transparent"}`}
-                    style={isActive ? { boxShadow: '2px 2px 0px 0px hsl(0 0% 0%)' } : {}}>
-                    <Icon className="w-5 h-5" />
+                  <div className={`p-1.5 transition-all ${isActive ? "bg-accent border-[1px] border-foreground" : ""}`}>
+                    <Icon className={`w-5 h-5 ${isActive ? "text-accent-foreground" : ""}`} />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wide">{label}</span>
+                  <span className="text-[10px] font-condensed uppercase tracking-wide">{label}</span>
                 </>
               )}
             </NavLink>

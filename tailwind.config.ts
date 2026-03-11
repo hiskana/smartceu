@@ -14,9 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
+        display: ['"Playfair Display"', 'serif'],
         body: ['"Space Grotesk"', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        condensed: ['"Anton"', 'sans-serif'],
+        handwritten: ['"Caveat"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",
