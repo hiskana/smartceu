@@ -16,8 +16,13 @@ import SplashScreen from "./components/SplashScreen";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
-  const handleSplashComplete = useCallback(() => setShowSplash(false), []);
+  const [showSplash, setShowSplash] = useState(() => {
+    return !localStorage.getItem("smartceu_visited");
+  });
+  const handleSplashComplete = useCallback(() => {
+    localStorage.setItem("smartceu_visited", "true");
+    setShowSplash(false);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
