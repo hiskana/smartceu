@@ -16,7 +16,9 @@ import SplashScreen from "./components/SplashScreen";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    return !localStorage.getItem("smartceu_visited");
+  });
   const handleSplashComplete = useCallback(() => setShowSplash(false), []);
 
   return (
