@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Home, BookOpen, Award, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import smartceuLogo from "@/assets/smartceu-logo.png";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
@@ -18,10 +19,7 @@ export default function Layout() {
       <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container flex items-center justify-between h-16">
           <NavLink to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground text-xs font-black">S</span>
-            </div>
-            <span className="text-sm font-extrabold tracking-tight">SmartCEU</span>
+            <img src={smartceuLogo} alt="SmartCEU" className="h-9 w-auto" />
           </NavLink>
           <nav className="flex items-center gap-1 bg-secondary/60 backdrop-blur-xl rounded-full px-1.5 py-1.5">
             {navItems.map(({ path, label }) => (
