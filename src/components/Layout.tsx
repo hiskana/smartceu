@@ -14,21 +14,24 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Desktop nav — ultra-minimal top bar */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background border-b border-foreground/10">
-        <div className="container flex items-center justify-between h-14">
+      {/* Desktop nav — premium floating bar */}
+      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50">
+        <div className="container flex items-center justify-between h-16">
           <NavLink to="/" className="flex items-center gap-2">
-            <span className="text-sm font-black tracking-[-0.03em] uppercase">SmartCEU</span>
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground text-xs font-black">S</span>
+            </div>
+            <span className="text-sm font-extrabold tracking-tight">SmartCEU</span>
           </NavLink>
-          <nav className="flex items-center gap-0">
+          <nav className="flex items-center gap-1 bg-secondary/60 backdrop-blur-xl rounded-full px-1.5 py-1.5">
             {navItems.map(({ path, label }) => (
               <NavLink
                 key={path}
                 to={path}
                 className={({ isActive }) =>
-                  `px-5 py-4 text-xs tracking-[0.15em] uppercase font-medium transition-colors ${
+                  `px-5 py-2 text-xs font-semibold tracking-tight rounded-full transition-all duration-300 ${
                     isActive
-                      ? "text-foreground"
+                      ? "bg-foreground text-background shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   }`
                 }
@@ -41,35 +44,35 @@ export default function Layout() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 pb-20 md:pb-0 md:pt-14">
+      <main className="flex-1 pb-20 md:pb-0 md:pt-16">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           >
             <Outlet />
           </motion.div>
         </AnimatePresence>
       </main>
 
-      {/* Mobile bottom nav — minimal */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-foreground/10">
-        <div className="flex items-center justify-around h-16">
+      {/* Mobile bottom nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border">
+        <div className="flex items-center justify-around h-16 px-4">
           {navItems.map(({ path, label, icon: Icon }) => (
             <NavLink
               key={path}
               to={path}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center gap-1 px-3 py-1.5 transition-colors ${
-                  isActive ? "text-foreground" : "text-muted-foreground"
+                `flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 ${
+                  isActive ? "text-primary" : "text-muted-foreground"
                 }`
               }
             >
-              <Icon className="w-5 h-5" strokeWidth={1.5} />
-              <span className="text-[9px] tracking-[0.15em] uppercase font-medium">{label}</span>
+              <Icon className="w-5 h-5" strokeWidth={isActive => 1.5} />
+              <span className="text-[10px] font-semibold tracking-tight">{label}</span>
             </NavLink>
           ))}
         </div>

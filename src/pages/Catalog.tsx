@@ -11,27 +11,25 @@ const categories = [
 
 export default function Catalog() {
   return (
-    <div className="min-h-screen py-16 md:py-24">
-      <div className="container">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mb-20"
-        >
-          <span className="section-marker block mb-6">Course Catalog</span>
-          <h1 className="display-massive text-6xl md:text-8xl mb-6">
-            All
-            <br />
-            Courses.
-          </h1>
-          <p className="text-sm font-light leading-[1.8] text-muted-foreground max-w-md">
-            Find what you need. Learn at your own pace.
-            Each course is designed for maximum efficiency.
-          </p>
-        </motion.div>
+    <div className="min-h-screen">
+      {/* Header — dark cinematic */}
+      <section className="section-dark relative overflow-hidden">
+        <div className="absolute inset-0 studio-glow" />
+        <div className="container relative z-10 py-24 md:py-32 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="section-marker block mb-4" style={{ color: 'hsl(0 0% 55%)' }}>Course Catalog</span>
+            <h1 className="display-massive text-5xl md:text-7xl text-white mb-4">
+              All Courses.
+            </h1>
+            <p className="text-sm font-light text-white/50 max-w-md mx-auto">
+              Find what you need. Learn at your own pace. Maximum efficiency.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Categories */}
+      {/* Course listings — light section */}
+      <div className="container py-16 md:py-24">
         {categories.map((category, catIndex) => {
           const categoryCourses = courses.filter((c) => c.category === category.id);
           if (categoryCourses.length === 0) return null;
@@ -42,60 +40,54 @@ export default function Catalog() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: catIndex * 0.1 }}
-              className="mb-20"
+              className="mb-16"
             >
-              <div className="flex items-center gap-6 mb-8 border-t border-foreground/10 pt-6">
-                <span className="font-mono text-sm text-muted-foreground">{category.marker}</span>
-                <h2 className="text-lg font-bold tracking-tight">{category.title}</h2>
+              <div className="flex items-center gap-4 mb-8">
+                <span className="meta-label">{category.marker}</span>
+                <h2 className="text-xl font-bold tracking-tight">{category.title}</h2>
               </div>
 
-              {/* Course list — rhythmic vertical layout */}
-              <div className="space-y-0">
+              <div className="grid gap-4">
                 {categoryCourses.map((course, i) => (
                   <Link key={course.id} to={`/course/${course.id}`}>
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: catIndex * 0.1 + i * 0.05 }}
-                      className="grid grid-cols-[auto_1fr_auto] md:grid-cols-[80px_1fr_200px_auto] gap-4 md:gap-8 items-center py-6 border-t border-foreground/5 group hover:bg-muted/30 transition-colors px-2 -mx-2"
+                      className="studio-card p-5 md:p-6 flex items-center gap-5 group hover:shadow-studio-lg transition-all duration-300"
                     >
-                      {/* Emoji */}
-                      <div className="text-3xl w-12 h-12 flex items-center justify-center">
+                      <div className="text-3xl w-14 h-14 rounded-2xl bg-muted flex items-center justify-center shrink-0">
                         {course.thumbnail}
                       </div>
 
-                      {/* Title + meta */}
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-semibold tracking-tight mb-1 group-hover:underline underline-offset-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">
                           {course.title}
                         </h3>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
+                        <div className="flex items-center gap-3 text-muted-foreground">
+                          <span className="flex items-center gap-1 text-xs">
                             <Clock className="w-3 h-3" />
                             {course.duration}
                           </span>
-                          <span className="w-px h-3 bg-foreground/15" />
-                          <span>{course.modules} modules</span>
+                          <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                          <span className="text-xs">{course.modules} modules</span>
                           {course.badge && (
                             <>
-                              <span className="w-px h-3 bg-foreground/15" />
-                              <span className="font-mono text-[10px] tracking-wider uppercase">{course.badge}</span>
+                              <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                              <span className="text-[10px] font-mono tracking-wider uppercase text-primary">{course.badge}</span>
                             </>
                           )}
                         </div>
                       </div>
 
-                      {/* Price */}
-                      <div className="hidden md:block text-right">
+                      <div className="hidden md:flex items-center gap-6">
                         {course.price === 0 ? (
-                          <span className="meta-label">Free</span>
+                          <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">Free</span>
                         ) : (
-                          <span className="text-sm font-medium">${course.price}</span>
+                          <span className="text-sm font-bold">${course.price}</span>
                         )}
+                        <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                       </div>
-
-                      {/* Arrow */}
-                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </motion.div>
                   </Link>
                 ))}

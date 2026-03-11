@@ -12,31 +12,30 @@ const mockUser = {
 
 export default function Profile() {
   return (
-    <div className="min-h-screen py-16 md:py-24">
-      <div className="container max-w-2xl">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mb-20"
-        >
-          <span className="section-marker block mb-6">Account</span>
-          <h1 className="display-massive text-6xl md:text-8xl">
-            Profile.
-          </h1>
-        </motion.div>
+    <div className="min-h-screen">
+      {/* Header — dark cinematic */}
+      <section className="section-dark relative overflow-hidden">
+        <div className="absolute inset-0 studio-glow" />
+        <div className="container relative z-10 py-24 md:py-32 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="section-marker block mb-4" style={{ color: 'hsl(0 0% 55%)' }}>Account</span>
+            <h1 className="display-massive text-5xl md:text-7xl text-white">Profile.</h1>
+          </motion.div>
+        </div>
+      </section>
 
+      <div className="container max-w-2xl py-16 md:py-24">
         {/* User Info */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="mb-16"
+          className="mb-12"
         >
           <span className="section-marker block mb-6">01. Identity</span>
-          <div className="border-t border-foreground/10">
-            <div className="py-6 grid grid-cols-[auto_1fr] gap-6 items-center">
-              <div className="w-14 h-14 bg-primary flex items-center justify-center">
+          <div className="studio-card p-6">
+            <div className="flex items-center gap-5 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center">
                 <User className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
               </div>
               <div>
@@ -44,21 +43,23 @@ export default function Profile() {
                 <span className="meta-label">{mockUser.email}</span>
               </div>
             </div>
-          </div>
 
-          <div className="border-t border-foreground/5">
-            {[
-              { icon: Stethoscope, label: mockUser.licenseType, detail: mockUser.licenseNumber },
-              { icon: Shield, label: mockUser.state, detail: "Licensed State" },
-            ].map((item) => (
-              <div key={item.label} className="py-4 grid grid-cols-[auto_1fr] gap-4 items-center border-b border-foreground/5">
-                <item.icon className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
-                <div>
-                  <p className="text-sm font-medium">{item.label}</p>
-                  <span className="meta-label">{item.detail}</span>
+            <div className="space-y-0">
+              {[
+                { icon: Stethoscope, label: mockUser.licenseType, detail: mockUser.licenseNumber },
+                { icon: Shield, label: mockUser.state, detail: "Licensed State" },
+              ].map((item) => (
+                <div key={item.label} className="py-4 flex items-center gap-4 border-t border-border">
+                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                    <item.icon className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{item.label}</p>
+                    <span className="meta-label">{item.detail}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </motion.section>
 
@@ -67,16 +68,18 @@ export default function Profile() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-16"
+          className="mb-12"
         >
           <span className="section-marker block mb-6">02. Settings</span>
-          <div className="border-t border-foreground/10">
+          <div className="studio-card overflow-hidden">
             {/* Notifications */}
-            <div className="flex items-center justify-between py-5 border-b border-foreground/5">
+            <div className="flex items-center justify-between p-5 border-b border-border">
               <div className="flex items-center gap-4">
-                <Bell className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                  <Bell className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">Notifications</p>
+                  <p className="text-sm font-semibold">Notifications</p>
                   <span className="meta-label">Course reminders & updates</span>
                 </div>
               </div>
@@ -84,11 +87,13 @@ export default function Profile() {
             </div>
 
             {/* Dark Mode */}
-            <div className="flex items-center justify-between py-5 border-b border-foreground/5">
+            <div className="flex items-center justify-between p-5 border-b border-border">
               <div className="flex items-center gap-4">
-                <Moon className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                  <Moon className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">Dark Mode</p>
+                  <p className="text-sm font-semibold">Dark Mode</p>
                   <span className="meta-label">Night-shift optimized</span>
                 </div>
               </div>
@@ -96,11 +101,13 @@ export default function Profile() {
             </div>
 
             {/* License Settings */}
-            <button className="flex items-center justify-between py-5 w-full text-left hover:bg-muted/30 transition-colors border-b border-foreground/5">
+            <button className="flex items-center justify-between p-5 w-full text-left hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-4">
-                <Shield className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">License Settings</p>
+                  <p className="text-sm font-semibold">License Settings</p>
                   <span className="meta-label">Update license information</span>
                 </div>
               </div>
@@ -116,7 +123,7 @@ export default function Profile() {
           transition={{ delay: 0.3 }}
           className="mb-12"
         >
-          <button className="btn-primary w-full inline-flex items-center justify-center gap-2">
+          <button className="btn-premium w-full inline-flex items-center justify-center gap-2">
             <LogOut className="w-4 h-4" />
             Sign Out
           </button>
