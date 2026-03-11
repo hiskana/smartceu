@@ -19,7 +19,7 @@ export default function Layout() {
       <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container flex items-center justify-between h-20">
           <NavLink to="/" className="flex items-center gap-2">
-            <img src={smartceuLogo} alt="SmartCEU" className="h-14 w-auto" />
+            <img src={smartceuLogo} alt="SmartCEU" className="h-28 w-auto object-contain -my-8" />
           </NavLink>
           <nav className="flex items-center gap-1 bg-secondary/60 backdrop-blur-xl rounded-full px-1.5 py-1.5">
             {navItems.map(({ path, label }) => (
