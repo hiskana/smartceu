@@ -42,7 +42,7 @@ export default function Layout() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 pb-20 md:pb-0 md:pt-16">
+      <main className="flex-1 pb-20 md:pb-0 md:pt-20">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
