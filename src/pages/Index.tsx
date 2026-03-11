@@ -18,13 +18,13 @@ export default function Index() {
               Continuing Education, Reimagined
             </span>
 
-            <h1 className="display-massive text-5xl md:text-7xl lg:text-[6rem] mb-8 text-white leading-[1.05]">
+            <h1 className="display-massive text-5xl md:text-7xl lg:text-[6rem] mb-10 text-white leading-[1.15] tracking-[-0.03em]">
               Modern CE
               <br />
               Made <span className="text-primary">Easy.</span>
             </h1>
 
-            <p className="text-base md:text-lg font-light leading-relaxed max-w-lg mx-auto mb-12 text-white/60">
+            <p className="text-base md:text-lg font-light leading-relaxed max-w-lg mx-auto mb-14 text-white/60">
               Short-form video courses designed for busy nurses.
               No PDFs. No tedious tests. Just fast, engaging
               continuing education — completed in minutes.
