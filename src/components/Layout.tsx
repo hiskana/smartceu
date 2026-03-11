@@ -71,7 +71,7 @@ export default function Layout() {
                 }`
               }
             >
-              <Icon className="w-5 h-5" strokeWidth={isActive => 1.5} />
+              <Icon className="w-5 h-5" strokeWidth={1.5} />
               <span className="text-[10px] font-semibold tracking-tight">{label}</span>
             </NavLink>
           ))}
