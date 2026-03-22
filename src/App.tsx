@@ -32,8 +32,8 @@ const App = () => {
         {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Index />} />
             <Route element={<Layout />}>
-              <Route path="/" element={<Index />} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />

@@ -17,6 +17,9 @@ export default {
         display: ['"Inter"', '-apple-system', 'sans-serif'],
         body: ['"Inter"', '-apple-system', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
+        manrope: ['"Manrope"', 'sans-serif'],
+        cabin: ['"Cabin"', 'sans-serif'],
+        serif: ['"Instrument Serif"', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
