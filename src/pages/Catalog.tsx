@@ -3,6 +3,9 @@ import { ArrowRight, Clock } from "lucide-react";
 import { courses } from "@/data/courses";
 import { motion } from "framer-motion";
 
+const VIDEO_URL =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260210_031346_d87182fb-b0af-4273-84d1-c6fd17d6bf0f.mp4";
+
 const categories = [
   { id: "free", title: "Mandatory Courses", marker: "01" },
   { id: "bundles", title: "Renewal Bundles", marker: "02" },
@@ -12,13 +15,20 @@ const categories = [
 export default function Catalog() {
   return (
     <div className="min-h-screen">
-      {/* Header — dark cinematic */}
-      <section className="section-dark relative overflow-hidden">
-        <div className="absolute inset-0 studio-glow" />
-        <div className="container relative z-10 py-24 md:py-32 text-center">
+      {/* Header — video hero */}
+      <section className="relative overflow-hidden">
+        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+          <source src={VIDEO_URL} type="video/mp4" />
+        </video>
+        <div className="relative z-10 container py-24 md:py-32 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className="section-marker block mb-4" style={{ color: 'hsl(0 0% 55%)' }}>Course Catalog</span>
-            <h1 className="display-massive text-5xl md:text-7xl text-white mb-4">
+            <div
+              className="inline-flex items-center gap-2.5 h-[38px] px-4 rounded-[10px] border backdrop-blur-md mb-6"
+              style={{ background: "rgba(85, 80, 110, 0.4)", borderColor: "rgba(164, 132, 215, 0.5)" }}
+            >
+              <span className="font-cabin font-medium text-sm text-white">Course Catalog</span>
+            </div>
+            <h1 className="font-serif text-5xl md:text-7xl text-white mb-4 leading-[1.1]">
               All Courses.
             </h1>
             <p className="text-sm font-light text-white/50 max-w-md mx-auto">
