@@ -48,8 +48,11 @@ export default function Catalog() {
         <p className="text-sm text-muted-foreground">
           For {previewCourse.audience.toLowerCase()}. Clinical review pending.
         </p>
-        <Link className="btn-premium inline-block" to="/course/de-escalation">
-          Open learning preview
+        <Link
+          className="btn-premium inline-block"
+          to={`/courses/de-escalation?profession=${profession}`}
+        >
+          View course details
         </Link>
       </article>
       <p>

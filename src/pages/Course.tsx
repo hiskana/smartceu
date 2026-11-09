@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { previewCourse as course } from "@/data/learning";
 import {
@@ -29,8 +29,23 @@ function Reader() {
   const [saveError, setSaveError] = useState(initial.error);
   const [font, setFont] = useState(18);
   const [dark, setDark] = useState(false);
-  const [stage, setStage] = useState<"read" | "check" | "finish">("read");
+  const stage = progress.stage ?? "read";
+  function setStage(stage: "read" | "check" | "finish") {
+    update({ ...progress, stage });
+  }
   const [notice, setNotice] = useState("");
+  useEffect(() => {
+    if (!progress.startedAt) {
+      const next = { ...progress, startedAt: new Date().toISOString() };
+      setProgress(next);
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(next));
+        setSaveError(false);
+      } catch {
+        setSaveError(true);
+      }
+    }
+  }, [progress]);
   function update(next: LearningProgress) {
     setProgress(next);
     try {
@@ -58,8 +73,8 @@ function Reader() {
       <main className="min-h-screen bg-background text-foreground pb-16">
         <header className="border-b border-border">
           <div className="max-w-3xl mx-auto px-5 py-5 flex flex-wrap justify-between gap-4">
-            <Link to="/catalog" className="underline">
-              ← Catalog
+            <Link to={`/courses/${course.id}`} className="underline">
+              ← Course details
             </Link>
             <Link to="/dashboard" className="underline">
               My learning
@@ -241,8 +256,11 @@ function Reader() {
                         <button
                           className="underline"
                           onClick={() => {
-                            update({ ...progress, section: q.section });
-                            setStage("read");
+                            update({
+                              ...progress,
+                              section: q.section,
+                              stage: "read",
+                            });
                           }}
                         >
                           Review relevant section
@@ -336,6 +354,12 @@ function Reader() {
               >
                 Download preview record
               </button>
+              <Link
+                to="/dashboard"
+                className="inline-block text-primary underline"
+              >
+                Go to My learning
+              </Link>
             </section>
           )}
           <footer className="border-t border-border pt-5 text-sm text-muted-foreground">

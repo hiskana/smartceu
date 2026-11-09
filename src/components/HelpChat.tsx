@@ -25,8 +25,8 @@ const questions = [
     question: "How do I start learning?",
     answer:
       "Open the free preview, read the three sections, and try the practice questions. You can review the lesson and retry. Finish with a short evaluation and participation acknowledgement.",
-    link: "/course/de-escalation",
-    label: "Open free preview",
+    link: "/courses/de-escalation",
+    label: "View free preview",
   },
   {
     question: "Will my progress be saved?",

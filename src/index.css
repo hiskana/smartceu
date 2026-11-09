@@ -261,3 +261,6 @@ button:focus-visible,a:focus-visible { outline:3px solid #4b9c91; outline-offset
 .profession-portrait img { object-position:center top; }
 .profession-lvn h2 { margin-bottom:5px; }
 .profession-subtitle { font-size:14px; font-weight:500; margin-bottom:24px; }
+
+.resume-card { display:flex; align-items:center; gap:14px; padding:18px; margin-bottom:20px; border:1px solid hsl(var(--border)); border-radius:16px; background:hsl(var(--secondary)); }
+.resume-card:hover { border-color:hsl(var(--primary)); }

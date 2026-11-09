@@ -71,6 +71,7 @@ describe("preview learning flow", () => {
     const saved = readProgress().progress;
     expect(saved.completedAt).toBeTruthy();
     expect(saved.attempts).toHaveLength(4);
+    expect(saved.stage).toBe("finish");
     cleanup();
     render(
       <MemoryRouter>

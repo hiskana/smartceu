@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { previewCourse } from "@/data/learning";
-import { downloadRecord, readProgress } from "@/lib/learning";
+import {
+  downloadRecord,
+  hasLearningActivity,
+  readProgress,
+} from "@/lib/learning";
 export default function Dashboard() {
   const [result] = useState(readProgress);
   const p = result.progress;
@@ -29,12 +33,19 @@ export default function Dashboard() {
           {new Set(p.read).size} of 3 sections read ·{" "}
           {p.completedAt ? "Preview completed" : "Not completed"}
         </p>
-        <Link className="btn-premium inline-block" to="/course/de-escalation">
+        <Link
+          className="btn-premium inline-block"
+          to={
+            hasLearningActivity(p) || p.completedAt
+              ? "/course/de-escalation"
+              : "/courses/de-escalation"
+          }
+        >
           {p.completedAt
             ? "Review preview"
-            : p.read.length
+            : hasLearningActivity(p)
               ? "Continue learning"
-              : "Start learning preview"}
+              : "View course details"}
         </Link>
       </section>
       <section className="space-y-4">

@@ -1,5 +1,23 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, BrainCircuit, HeartPulse } from "lucide-react";
+import {
+  ArrowUpRight,
+  BrainCircuit,
+  HeartPulse,
+  Bookmark,
+  ArrowRight,
+} from "lucide-react";
+
+import { previewCourse } from "@/data/learning";
+import { hasLearningActivity, readProgress } from "@/lib/learning";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const paths = [
   {
@@ -19,6 +37,15 @@ const paths = [
 ];
 
 export default function Index() {
+  const [{ progress, error }] = useState(readProgress);
+  const hasActivity =
+    !error && !progress.completedAt && hasLearningActivity(progress);
+  const resumeLabel =
+    progress.stage === "finish"
+      ? "Reflection & completion"
+      : progress.stage === "check"
+        ? "Practice questions"
+        : previewCourse.sections[progress.section].title;
   return (
     <div className="profession-home">
       <header className="profession-welcome">
@@ -26,6 +53,25 @@ export default function Index() {
         <h1>Your next chapter.</h1>
         <span>Choose your profession.</span>
       </header>
+      {hasActivity && (
+        <Link
+          to="/course/de-escalation"
+          className="resume-card"
+          aria-label="Continue learning: Therapeutic Communication & De-escalation"
+        >
+          <Bookmark size={22} className="shrink-0 text-primary" />
+          <div className="min-w-0 flex-1">
+            <span className="text-xs text-primary font-semibold">
+              Continue learning
+            </span>
+            <p className="text-sm font-semibold mt-1">{previewCourse.title}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {resumeLabel} · Saved in this browser
+            </p>
+          </div>
+          <ArrowRight size={20} className="shrink-0 text-primary" />
+        </Link>
+      )}
       <div className="profession-tiles">
         {paths.map(({ id, title, icon: Icon, theme, photo }) => (
           <Link
@@ -56,6 +102,50 @@ export default function Index() {
             </div>
           </Link>
         ))}
+      </div>
+      <div className="text-center mt-5">
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="text-sm text-primary underline underline-offset-4 py-2">
+              How SmartCEU works.
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md rounded-2xl w-[calc(100%-32px)]">
+            <DialogHeader>
+              <DialogTitle>How SmartCEU works</DialogTitle>
+              <DialogDescription>
+                A few simple steps, at your pace.
+              </DialogDescription>
+            </DialogHeader>
+            <ol className="space-y-5 my-3 list-decimal pl-5 text-sm">
+              <li>
+                <strong>Choose your learning.</strong>
+                <p className="mt-1 text-muted-foreground">
+                  Pick PT or LVN and open the free preview.
+                </p>
+              </li>
+              <li>
+                <strong>Read, practice, and return.</strong>
+                <p className="mt-1 text-muted-foreground">
+                  Work through short sections and knowledge checks. Your place
+                  is saved in this browser.
+                </p>
+              </li>
+              <li>
+                <strong>Finish and keep a record.</strong>
+                <p className="mt-1 text-muted-foreground">
+                  Complete the evaluation and acknowledgement, then download
+                  your preview record.
+                </p>
+              </li>
+            </ol>
+            <p className="text-xs text-muted-foreground border-t pt-4">
+              The current preview is free and awards 0 CE contact hours. Your
+              record is not a CE certificate. Progress does not sync across
+              devices.
+            </p>
+          </DialogContent>
+        </Dialog>
       </div>
       <p className="profession-preview">
         Free learning preview · No CE credit yet
