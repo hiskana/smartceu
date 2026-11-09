@@ -1,8 +1,21 @@
-# Welcome to your Lovable project
+# SmartCEU
+
+SmartCEU is a mobile-first learning preview for California psychiatric technicians and LVNs. It includes a text reader, practice questions, browser-local progress, a downloadable preview completion record, and a floating FAQ helper.
+
+The preview awards **0 CE contact hours**. Clinical review, provider approval, accounts, payments, backend records, and qualifying certificates are not yet implemented. The homepage portraits are AI-generated illustrative assets, not instructor photographs.
+
+This repository is the existing Lovable-built frontend prototype imported from [hiskana/smartceu](https://github.com/hiskana/smartceu).
+
+## Project documentation
+
+- [Product Requirements Document](docs/SMARTCEU_PRD.md)
+- [Build Progress Report](docs/SMARTCEU_BUILD_PROGRESS.md)
+- [Current State and Next Steps](docs/CURRENT_STATE.md)
+- [Code Review and First Course Flow](docs/CODE_REVIEW_AND_FIRST_FLOW.md)
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Source repository**: https://github.com/hiskana/smartceu
 
 ## How can I edit this code?
 

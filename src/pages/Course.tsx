@@ -1,227 +1,364 @@
-import { useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Play, Pause, ArrowLeft, Check, X, Award } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { courses } from "@/data/courses";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { previewCourse as course } from "@/data/learning";
+import {
+  canComplete,
+  downloadRecord,
+  LearningProgress,
+  readProgress,
+  storageKey,
+} from "@/lib/learning";
 
 export default function Course() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const course = courses.find((c) => c.id === id);
-
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentModule, setCurrentModule] = useState(1);
-  const [scenarioIndex, setScenarioIndex] = useState(0);
-  const [showAttestation, setShowAttestation] = useState(false);
-  const [attested, setAttested] = useState(false);
-  const [completed, setCompleted] = useState(false);
-
-  const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-6, 6]);
-  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
-  const leftGlow = useTransform(x, [-200, 0], [1, 0]);
-  const rightGlow = useTransform(x, [0, 200], [0, 1]);
-
-  if (!course) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <span className="section-marker block mb-4">Error</span>
-          <h2 className="text-2xl font-extrabold mb-2">Course Not Found</h2>
-          <p className="text-sm text-muted-foreground">Return to the catalog.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const scenario = course.scenarios[scenarioIndex];
-  const progress = (currentModule / course.modules) * 100;
-
-  const handleSwipe = (direction: "left" | "right") => {
-    const targetX = direction === "left" ? -300 : 300;
-    animate(x, targetX, { duration: 0.3 }).then(() => {
-      if (scenarioIndex < course.scenarios.length - 1) {
-        setScenarioIndex((prev) => prev + 1);
-        x.set(0);
-      } else {
-        setShowAttestation(true);
-      }
-    });
-  };
-
-  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipeThreshold = 100;
-    if (Math.abs(info.offset.x) > swipeThreshold) {
-      handleSwipe(info.offset.x > 0 ? "right" : "left");
-    } else {
-      animate(x, 0, { type: "spring", stiffness: 500, damping: 30 });
+  return id === course.id ? (
+    <Reader key={id} />
+  ) : (
+    <main className="container py-20">
+      <h1 className="text-3xl mb-4">Course unavailable</h1>
+      <p className="mb-6">This course has no published learning content yet.</p>
+      <Link className="btn-premium" to="/catalog">
+        Browse learning previews
+      </Link>
+    </main>
+  );
+}
+function Reader() {
+  const [initial] = useState(readProgress);
+  const [progress, setProgress] = useState(initial.progress);
+  const [saveError, setSaveError] = useState(initial.error);
+  const [font, setFont] = useState(18);
+  const [dark, setDark] = useState(false);
+  const [stage, setStage] = useState<"read" | "check" | "finish">("read");
+  const [notice, setNotice] = useState("");
+  function update(next: LearningProgress) {
+    setProgress(next);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(next));
+      setSaveError(false);
+    } catch {
+      setSaveError(true);
     }
-  };
-
-  const handleGenerateCertificate = () => {
-    setCompleted(true);
-    setTimeout(() => navigate("/dashboard"), 3000);
-  };
-
-  if (completed) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center section-dark">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 15 }}
-          className="mb-8"
-        >
-          <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
-            <Award className="w-10 h-10 text-primary" strokeWidth={1.5} />
-          </div>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <span className="section-marker block mb-4" style={{ color: 'hsl(0 0% 55%)' }}>Complete</span>
-          <h1 className="display-massive text-4xl mb-4 text-white">Certificate Generated</h1>
-          <p className="text-sm text-white/50">Redirecting to progress...</p>
-        </motion.div>
-      </div>
-    );
   }
-
+  const section = course.sections[progress.section];
+  const allRead = course.sections.every((_, i) => progress.read.includes(i));
+  const passed = course.questions.every(
+    (q) => progress.answers[q.id] === q.correct,
+  );
+  function finish() {
+    if (!canComplete(progress)) return;
+    update({
+      ...progress,
+      completedAt: progress.completedAt ?? new Date().toISOString(),
+    });
+    setNotice("Preview completed. Your record is available below.");
+  }
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-3 flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-muted rounded-xl transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xs font-bold tracking-tight truncate">{course.title}</h1>
-          <span className="meta-label">Module {currentModule} of {course.modules}</span>
-        </div>
-      </header>
-
-      {/* Progress — rounded bar */}
-      <div className="h-1 bg-muted">
-        <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
-      </div>
-
-      {/* Video Player */}
-      <div className="relative aspect-[9/14] max-h-[55vh] bg-muted flex items-center justify-center">
-        <span className="text-7xl">{course.thumbnail}</span>
-
-        <button
-          onClick={() => setIsPlaying(!isPlaying)}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: isPlaying ? 0 : 1 }}
-            className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-studio-purple"
-          >
-            {isPlaying ? (
-              <Pause className="w-6 h-6 text-primary-foreground" fill="currentColor" />
-            ) : (
-              <Play className="w-6 h-6 text-primary-foreground ml-1" fill="currentColor" />
-            )}
-          </motion.div>
-        </button>
-
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-background/80 backdrop-blur-xl p-4 rounded-2xl">
-            <p className="text-xs font-bold tracking-tight">Understanding Unconscious Bias</p>
-            <span className="meta-label">How implicit biases affect patient care</span>
+    <div className={dark ? "dark" : ""}>
+      <main className="min-h-screen bg-background text-foreground pb-16">
+        <header className="border-b border-border">
+          <div className="max-w-3xl mx-auto px-5 py-5 flex flex-wrap justify-between gap-4">
+            <Link to="/catalog" className="underline">
+              ← Catalog
+            </Link>
+            <Link to="/dashboard" className="underline">
+              My learning
+            </Link>
           </div>
-        </div>
-      </div>
-
-      {/* Content area */}
-      <div className="flex-1 p-6 flex flex-col">
-        {!showAttestation ? (
-          <>
-            <div className="mb-6">
-              <span className="section-marker block mb-2">Clinical Scenario</span>
-              <p className="text-xs text-muted-foreground">
-                Swipe right for correct action — swipe left for incorrect
-              </p>
-            </div>
-
-            <div className="relative flex-1 flex items-center justify-center min-h-[200px]">
-              {/* Direction indicators */}
-              <motion.div
-                style={{ opacity: rightGlow }}
-                className="absolute inset-y-0 right-0 w-16 pointer-events-none flex items-center justify-center"
-              >
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Check className="w-5 h-5 text-primary" />
-                </div>
-              </motion.div>
-              <motion.div
-                style={{ opacity: leftGlow }}
-                className="absolute inset-y-0 left-0 w-16 pointer-events-none flex items-center justify-center"
-              >
-                <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
-                  <X className="w-5 h-5 text-destructive" />
-                </div>
-              </motion.div>
-
-              {/* Swipeable card */}
-              <motion.div
-                style={{ x, rotate, opacity }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.7}
-                onDragEnd={handleDragEnd}
-                className="studio-card p-6 w-full max-w-sm cursor-grab active:cursor-grabbing"
-              >
-                <span className="meta-label block mb-4">
-                  {scenarioIndex + 1} / {course.scenarios.length}
-                </span>
-                <p className="text-sm font-light leading-relaxed">{scenario?.situation}</p>
-              </motion.div>
-            </div>
-
+        </header>
+        <div className="max-w-3xl mx-auto px-5 py-8 space-y-7">
+          <div className="rounded-xl border border-border p-4 text-sm">
+            Learning preview · 0 CE contact hours · Clinical review pending.
+            This is not an approved CE course or a substitute for facility
+            training.
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground mb-3">
+              {course.audience}
+            </p>
+            <h1 className="font-semibold tracking-tight text-4xl leading-tight">
+              {course.title}
+            </h1>
+            <p className="mt-4">
+              Practice noticing changes, communicating respectfully, and
+              recognizing the limits of this preview.
+            </p>
+          </div>
+          <p role="status" className="text-sm">
+            {saveError
+              ? "Progress could not be restored or saved. You can continue, but keep this page open; changes may be lost."
+              : "Progress is saved on this browser only. It does not sync across devices."}
+          </p>
+          <nav aria-label="Course steps" className="flex flex-wrap gap-3">
             <button
-              onClick={() => setShowAttestation(true)}
-              className="text-xs text-muted-foreground underline mt-6 text-center"
+              className="btn-ghost"
+              aria-current={stage === "read" ? "step" : undefined}
+              onClick={() => setStage("read")}
             >
-              Skip to completion
+              1. Read ({new Set(progress.read).size}/3)
             </button>
-          </>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full"
-          >
-            <span className="section-marker block mb-6">Final Attestation</span>
-
-            <div className="space-y-6">
-              <label className="flex items-start gap-3 cursor-pointer studio-card p-5 hover:shadow-studio-lg transition-all">
-                <Checkbox
-                  checked={attested}
-                  onCheckedChange={(checked) => setAttested(checked === true)}
-                  className="mt-0.5"
-                />
-                <span className="text-sm font-light leading-relaxed">
-                  I legally attest that I have completed this educational material and understand the content
-                  presented. I confirm that I personally participated in this learning activity.
-                </span>
-              </label>
-
-              <button
-                onClick={handleGenerateCertificate}
-                disabled={!attested}
-                className="btn-premium w-full disabled:opacity-30 disabled:cursor-not-allowed"
+            <button
+              className="btn-ghost disabled:opacity-40"
+              disabled={!allRead}
+              onClick={() => setStage("check")}
+            >
+              2. Practice
+            </button>
+            <button
+              className="btn-ghost disabled:opacity-40"
+              disabled={!allRead || !passed}
+              onClick={() => setStage("finish")}
+            >
+              3. Reflect & finish
+            </button>
+          </nav>
+          {stage === "read" && (
+            <>
+              <div className="flex flex-wrap items-center gap-4 border-y border-border py-3">
+                <label>
+                  Text size{" "}
+                  <select
+                    className="bg-background border rounded p-2"
+                    aria-label="Text size"
+                    value={font}
+                    onChange={(e) => setFont(Number(e.target.value))}
+                  >
+                    <option value={18}>Standard</option>
+                    <option value={21}>Large</option>
+                    <option value={24}>Extra large</option>
+                  </select>
+                </label>
+                <button
+                  className="underline"
+                  aria-pressed={dark}
+                  onClick={() => setDark(!dark)}
+                >
+                  Dark mode
+                </button>
+              </div>
+              <nav
+                aria-label="Lesson sections"
+                className="flex flex-wrap gap-3"
               >
-                Generate Certificate
+                {course.sections.map((s, i) => (
+                  <button
+                    key={s.id}
+                    className="underline text-sm"
+                    aria-current={progress.section === i ? "page" : undefined}
+                    onClick={() => update({ ...progress, section: i })}
+                  >
+                    {i + 1}. {s.title}
+                    {progress.read.includes(i) ? " ✓" : ""}
+                  </button>
+                ))}
+              </nav>
+              <article id="lesson" style={{ fontSize: font, lineHeight: 1.85 }}>
+                <h2 className="text-2xl font-semibold mb-4">{section.title}</h2>
+                <p>{section.text}</p>
+                <p className="border-l-4 border-primary pl-4 mt-6">
+                  {section.takeaway}
+                </p>
+              </article>
+              <button
+                className="btn-premium"
+                onClick={() => {
+                  update({
+                    ...progress,
+                    read: [...new Set([...progress.read, progress.section])],
+                    section: Math.min(2, progress.section + 1),
+                  });
+                  if (progress.section === 2)
+                    setNotice(
+                      "Section marked read. Read all sections to unlock practice.",
+                    );
+                }}
+              >
+                Mark section read{progress.section < 2 ? " & continue" : ""}
               </button>
-            </div>
-          </motion.div>
-        )}
-      </div>
+              {allRead && (
+                <button
+                  className="btn-premium ml-3"
+                  onClick={() => setStage("check")}
+                >
+                  Start practice
+                </button>
+              )}
+            </>
+          )}
+          {stage === "check" && (
+            <section>
+              <h2 className="text-2xl font-semibold mb-3">
+                Practice what you learned
+              </h2>
+              <p className="mb-6">
+                Open book. Answer all three correctly to continue. You can
+                review and retry without a limit.
+              </p>
+              <div className="space-y-8">
+                {course.questions.map((q, i) => (
+                  <fieldset
+                    key={q.id}
+                    className="border border-border rounded-xl p-5"
+                  >
+                    <legend className="font-semibold px-2">
+                      {i + 1}. {q.prompt}
+                    </legend>
+                    {q.options.map((option, index) => (
+                      <label
+                        key={option}
+                        className="flex gap-3 items-start py-3"
+                      >
+                        <input
+                          type="radio"
+                          name={q.id}
+                          checked={progress.answers[q.id] === index}
+                          disabled={!!progress.completedAt}
+                          onChange={() =>
+                            update({
+                              ...progress,
+                              answers: { ...progress.answers, [q.id]: index },
+                              attempts: [
+                                ...progress.attempts,
+                                {
+                                  question: q.id,
+                                  answer: index,
+                                  correct: index === q.correct,
+                                },
+                              ],
+                            })
+                          }
+                          className="mt-1"
+                        />
+                        {option}
+                      </label>
+                    ))}
+                    {progress.answers[q.id] !== undefined && (
+                      <p role="status" className="mt-3">
+                        {progress.answers[q.id] === q.correct
+                          ? "Correct. "
+                          : "Review and try again. "}
+                        {q.explanation}{" "}
+                        <button
+                          className="underline"
+                          onClick={() => {
+                            update({ ...progress, section: q.section });
+                            setStage("read");
+                          }}
+                        >
+                          Review relevant section
+                        </button>
+                      </p>
+                    )}
+                  </fieldset>
+                ))}
+              </div>
+              <button
+                className="btn-premium mt-6 disabled:opacity-40"
+                disabled={!passed || !allRead}
+                onClick={() => setStage("finish")}
+              >
+                Continue to reflection
+              </button>
+            </section>
+          )}
+          {stage === "finish" && (
+            <section className="space-y-5">
+              <h2 className="text-2xl font-semibold">Reflect & finish</h2>
+              <label className="block">
+                How useful was this preview?
+                <select
+                  disabled={!!progress.completedAt}
+                  className="block bg-background border rounded p-3 mt-2"
+                  value={progress.rating}
+                  onChange={(e) =>
+                    update({ ...progress, rating: e.target.value })
+                  }
+                >
+                  <option value="">Choose a rating</option>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n}>
+                      {n} —{" "}
+                      {n === 1
+                        ? "Not useful"
+                        : n === 5
+                          ? "Very useful"
+                          : "Somewhat useful"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                What could we improve? (optional)
+                <textarea
+                  disabled={!!progress.completedAt}
+                  maxLength={2000}
+                  className="block bg-background border rounded p-3 w-full mt-2"
+                  value={progress.feedback}
+                  onChange={(e) =>
+                    update({ ...progress, feedback: e.target.value })
+                  }
+                />
+              </label>
+              <label className="flex gap-3">
+                <input
+                  type="checkbox"
+                  disabled={!!progress.completedAt}
+                  checked={progress.attested}
+                  onChange={(e) =>
+                    update({ ...progress, attested: e.target.checked })
+                  }
+                />
+                I personally reviewed the sections and completed the practice
+                questions. I understand this preview awards no CE credit.
+              </label>
+              <button
+                disabled={!canComplete(progress) || !!progress.completedAt}
+                className="btn-premium disabled:opacity-40"
+                onClick={finish}
+              >
+                {progress.completedAt
+                  ? "Preview completed"
+                  : "Complete preview"}
+              </button>
+            </section>
+          )}
+          {notice && <p role="status">{notice}</p>}
+          {progress.completedAt && (
+            <section className="studio-card p-6 space-y-4">
+              <h2 className="text-2xl">Your preview completion record</h2>
+              <p>
+                Completed {new Date(progress.completedAt).toLocaleString()}.
+                This record is not a CE certificate.
+              </p>
+              <button
+                className="btn-premium"
+                onClick={() => downloadRecord(progress)}
+              >
+                Download preview record
+              </button>
+            </section>
+          )}
+          <footer className="border-t border-border pt-5 text-sm text-muted-foreground">
+            <p>
+              Draft curriculum · Version {course.version} · Instructor review
+              pending.
+            </p>
+            <p className="mt-2">
+              Reference:{" "}
+              <a
+                className="underline"
+                href="https://www.nice.org.uk/guidance/ng10/chapter/recommendations"
+                target="_blank"
+                rel="noreferrer"
+              >
+                NICE NG10, de-escalation recommendations 1.3.12–1.3.20
+              </a>
+              . This UK guidance informs the preview; it does not establish
+              California CE approval.
+            </p>
+          </footer>
+        </div>
+      </main>
     </div>
   );
 }

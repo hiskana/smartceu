@@ -1,79 +1,99 @@
+import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { Home, BookOpen, Award, User } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import smartceuLogo from "@/assets/smartceu-logo.png";
-
-const navItems = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/catalog", label: "Catalog", icon: BookOpen },
-  { path: "/dashboard", label: "Progress", icon: Award },
-  { path: "/profile", label: "Profile", icon: User },
+import { BookOpen, House, Bookmark, Menu, X } from "lucide-react";
+const items = [
+  { path: "/", label: "Home", icon: House },
+  { path: "/catalog", label: "Courses", icon: BookOpen },
+  { path: "/dashboard", label: "My learning", icon: Bookmark },
 ];
-
 export default function Layout() {
-  const location = useLocation();
-
+  const [menu, setMenu] = useState(false);
+  const { pathname } = useLocation();
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Desktop nav — premium floating bar */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container flex items-center justify-between h-20">
-          <NavLink to="/" className="flex items-center gap-2">
-            <img src={smartceuLogo} alt="SmartCEU" className="h-28 w-auto object-contain -my-8" />
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="site-header">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-20 flex justify-between items-center gap-4">
+          <NavLink
+            to="/"
+            className="flex items-center gap-2.5"
+            onClick={() => setMenu(false)}
+          >
+            <span className="brand-mark">
+              <BookOpen size={22} />
+            </span>
+            <span className="text-2xl font-bold tracking-tight">
+              Smart<span className="text-primary">CEU</span>
+            </span>
           </NavLink>
-          <nav className="flex items-center gap-1 bg-secondary/60 backdrop-blur-xl rounded-full px-1.5 py-1.5">
-            {navItems.map(({ path, label }) => (
+          <nav
+            aria-label="Main navigation"
+            className="hidden sm:flex items-center gap-2"
+          >
+            {items.map((item) => (
               <NavLink
-                key={path}
-                to={path}
+                key={item.path}
+                end={item.path === "/"}
+                to={item.path}
                 className={({ isActive }) =>
-                  `px-5 py-2 text-xs font-semibold tracking-tight rounded-full transition-all duration-300 ${
-                    isActive
-                      ? "bg-foreground text-background shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`
+                  `rounded-full px-5 py-2.5 text-sm font-semibold ${isActive ? "bg-secondary text-primary" : "text-muted-foreground hover:text-primary"}`
                 }
               >
-                {label}
+                {item.label}
               </NavLink>
             ))}
           </nav>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="flex-1 pb-20 md:pb-0 md:pt-20">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          <button
+            className="sm:hidden p-2 rounded-lg border border-border"
+            aria-label={menu ? "Close menu" : "Open menu"}
+            aria-expanded={menu}
+            aria-controls="mobile-menu"
+            onClick={() => setMenu(!menu)}
           >
-            <Outlet />
-          </motion.div>
-        </AnimatePresence>
-      </main>
-
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border">
-        <div className="flex items-center justify-around h-16 px-4">
-          {navItems.map(({ path, label, icon: Icon }) => (
-            <NavLink
-              key={path}
-              to={path}
-              className={({ isActive }) =>
-                `flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 ${
-                  isActive ? "text-primary" : "text-muted-foreground"
-                }`
-              }
-            >
-              <Icon className="w-5 h-5" strokeWidth={1.5} />
-              <span className="text-[10px] font-semibold tracking-tight">{label}</span>
-            </NavLink>
-          ))}
+            {menu ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
+        {menu && (
+          <nav
+            id="mobile-menu"
+            aria-label="Mobile menu"
+            className="sm:hidden border-t px-5 py-3 space-y-1"
+          >
+            {items.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setMenu(false)}
+                className="block py-3 font-medium"
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
+      </header>
+      <main className="pb-28 sm:pb-24">
+        <Outlet />
+      </main>
+      {pathname !== "/" && (
+        <footer className="border-t border-border px-5 py-8 pb-28 sm:pb-24 text-center text-xs text-muted-foreground">
+          Made for California PTs & LVNs. Currently a learning preview · No CE
+          credit.
+        </footer>
+      )}
+      <nav aria-label="Quick navigation" className="mobile-tabs sm:hidden">
+        {items.map(({ path, label, icon: Icon }) => (
+          <NavLink
+            key={path}
+            end={path === "/"}
+            to={path}
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-1 p-2 text-[11px] font-semibold ${isActive ? "text-primary" : "text-muted-foreground"}`
+            }
+          >
+            <Icon size={21} />
+            {label}
+          </NavLink>
+        ))}
       </nav>
     </div>
   );

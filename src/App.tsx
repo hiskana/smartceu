@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,29 +10,20 @@ import Course from "./pages/Course";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import SplashScreen from "./components/SplashScreen";
+import HelpChat from "./components/HelpChat";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(() => {
-    return !localStorage.getItem("smartceu_visited");
-  });
-  const handleSplashComplete = useCallback(() => {
-    localStorage.setItem("smartceu_visited", "true");
-    setShowSplash(false);
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
             <Route element={<Layout />}>
+              <Route path="/" element={<Index />} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
@@ -41,6 +31,7 @@ const App = () => {
             <Route path="/course/:id" element={<Course />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <HelpChat />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
