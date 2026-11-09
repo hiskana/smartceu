@@ -232,7 +232,7 @@
 .help-dialog > button { color:white; opacity:1; }
 button:focus-visible,a:focus-visible { outline:3px solid #4b9c91; outline-offset:4px; }
 @media(max-width:639px) { .help-launcher { bottom:calc(87px + env(safe-area-inset-bottom)); right:18px; }.help-launcher-reader { bottom:20px; }.help-dialog { top:auto; bottom:calc(18px + env(safe-area-inset-bottom)); transform:translateX(-50%); max-height:85dvh; }.hero-course { padding:25px; } }
-@media(min-width:640px) { .mobile-tabs { display:none; } }
+@media(min-width:768px) { .mobile-tabs { display:none; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 
 /* Two clear, human-centered entry points. */
@@ -264,3 +264,7 @@ button:focus-visible,a:focus-visible { outline:3px solid #4b9c91; outline-offset
 
 .resume-card { display:flex; align-items:center; gap:14px; padding:18px; margin-bottom:20px; border:1px solid hsl(var(--border)); border-radius:16px; background:hsl(var(--secondary)); }
 .resume-card:hover { border-color:hsl(var(--primary)); }
+
+.hub-board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; align-items:start; }
+.hub-board > section { max-height:75vh; overflow-y:auto; }
+@media(max-width:1023px) { .hub-board { display:flex; overflow-x:auto; scroll-snap-type:x proximity; padding-bottom:14px; }.hub-board > section { flex:0 0 min(320px,85vw); scroll-snap-align:start; max-height:65vh; } }

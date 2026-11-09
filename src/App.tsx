@@ -11,6 +11,7 @@ import CourseDetails from "./pages/CourseDetails";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Hub from "./pages/Hub";
 import HelpChat from "./components/HelpChat";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => {
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<Index />} />
+              <Route path="/hub" element={<Hub />} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/courses/:id" element={<CourseDetails />} />
               <Route path="/dashboard" element={<Dashboard />} />

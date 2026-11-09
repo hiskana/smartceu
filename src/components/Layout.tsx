@@ -1,10 +1,18 @@
 import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { BookOpen, House, Bookmark, Menu, X } from "lucide-react";
+import {
+  BookOpen,
+  House,
+  Bookmark,
+  Menu,
+  X,
+  LayoutDashboard,
+} from "lucide-react";
 const items = [
   { path: "/", label: "Home", icon: House },
   { path: "/catalog", label: "Courses", icon: BookOpen },
   { path: "/dashboard", label: "My learning", icon: Bookmark },
+  { path: "/hub", label: "Hub", icon: LayoutDashboard },
 ];
 export default function Layout() {
   const [menu, setMenu] = useState(false);
@@ -27,7 +35,7 @@ export default function Layout() {
           </NavLink>
           <nav
             aria-label="Main navigation"
-            className="hidden sm:flex items-center gap-2"
+            className="hidden md:flex items-center gap-2"
           >
             {items.map((item) => (
               <NavLink
@@ -43,7 +51,7 @@ export default function Layout() {
             ))}
           </nav>
           <button
-            className="sm:hidden p-2 rounded-lg border border-border"
+            className="md:hidden p-2 rounded-lg border border-border"
             aria-label={menu ? "Close menu" : "Open menu"}
             aria-expanded={menu}
             aria-controls="mobile-menu"
@@ -56,7 +64,7 @@ export default function Layout() {
           <nav
             id="mobile-menu"
             aria-label="Mobile menu"
-            className="sm:hidden border-t px-5 py-3 space-y-1"
+            className="md:hidden border-t px-5 py-3 space-y-1"
           >
             {items.map((item) => (
               <NavLink
@@ -80,7 +88,7 @@ export default function Layout() {
           credit.
         </footer>
       )}
-      <nav aria-label="Quick navigation" className="mobile-tabs sm:hidden">
+      <nav aria-label="Quick navigation" className="mobile-tabs md:hidden">
         {items.map(({ path, label, icon: Icon }) => (
           <NavLink
             key={path}

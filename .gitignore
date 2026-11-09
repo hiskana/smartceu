@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local Netlify state and deployment archives
+.netlify
+dist-deploy.zip
