@@ -7,6 +7,19 @@ import {
   MessageSquare,
   LayoutDashboard,
   CheckCircle2,
+  Circle,
+  Clock3,
+  Search,
+  SlidersHorizontal,
+  Lightbulb,
+  Code2,
+  GraduationCap,
+  Compass,
+  Megaphone,
+  Users,
+  ArrowUpRight,
+  Sparkles,
+  ListTodo,
 } from "lucide-react";
 import {
   Dialog,
@@ -26,6 +39,13 @@ import {
   statuses,
 } from "@/lib/hub";
 
+const categoryIcons = {
+  App: Code2,
+  Courses: GraduationCap,
+  Strategy: Compass,
+  Marketing: Megaphone,
+};
+const statusIcons = { "To Do": ListTodo, Doing: Clock3, Done: CheckCircle2 };
 const field =
   "block w-full border border-border rounded-xl p-3 bg-background text-sm mt-2";
 const blankTask = (): HubTask => ({
@@ -63,6 +83,9 @@ export default function Hub() {
   const [error, setError] = useState("");
   const [edit, setEdit] = useState<HubTask | null>(null);
   const [isNew, setIsNew] = useState(true);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [ownerFilter, setOwnerFilter] = useState("Everyone");
   const postId = useRef(crypto.randomUUID());
   const { refetch } = query;
   useEffect(() => {
@@ -96,7 +119,11 @@ export default function Hub() {
       setPending(false);
     }
   }
-  function openTask(t?: HubTask, p?: HubPost) {
+  function openTask(
+    t?: HubTask,
+    p?: HubPost,
+    status: HubTask["status"] = "To Do",
+  ) {
     setError("");
     setIsNew(!t);
     setEdit(
@@ -104,6 +131,7 @@ export default function Hub() {
         ? { ...t }
         : {
             ...blankTask(),
+            status,
             title: p ? "Task from discussion" : "",
             details: p?.body.slice(0, 4000) ?? "",
             sourcePost: p?.id ?? null,
@@ -136,61 +164,147 @@ export default function Hub() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return (
-    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-9 space-y-8">
-      <header className="flex flex-wrap gap-5 justify-between items-start">
-        <div>
-          <p className="text-primary text-xs font-semibold uppercase tracking-widest mb-2">
-            Build together
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            SmartCEU Hub
-          </h1>
-          <p className="text-muted-foreground mt-3 text-sm">
-            One place for Iska & Matthew to plan, discuss, and keep moving.
-          </p>
+    <div className="hub-workspace max-w-7xl mx-auto px-4 sm:px-8 py-7 space-y-6">
+      <header className="hub-banner">
+        <div className="hub-banner-top">
+          <span className="hub-workspace-label">
+            <LayoutDashboard size={15} /> SMARTCEU WORKSPACE
+          </span>
+          <div className="hub-members">
+            <span className="hub-avatar iska" title="Iska">
+              I
+            </span>
+            <span className="hub-avatar matthew" title="Matthew">
+              M
+            </span>
+            <span className="text-xs ml-1">Iska + Matthew</span>
+          </div>
         </div>
+        <div className="hub-banner-bottom">
+          <div>
+            <h1>Good ideas. Shared progress.</h1>
+            <p>Plan the next step. Build SmartCEU together.</p>
+          </div>
+          <a
+            className="hub-banner-action"
+            href="#discussion"
+            onClick={() => setKind("Idea")}
+          >
+            <Lightbulb size={17} />
+            Share an idea
+            <ArrowUpRight size={16} />
+          </a>
+        </div>
+      </header>
+      <section aria-label="Project progress" className="hub-stats">
+        {[
+          {
+            label: "Total tasks",
+            value: query.data?.tasks.length,
+            icon: LayoutDashboard,
+            tone: "blue",
+          },
+          {
+            label: "To Do",
+            value: query.data?.tasks.filter((t) => t.status === "To Do").length,
+            icon: ListTodo,
+            tone: "slate",
+          },
+          {
+            label: "Doing",
+            value: query.data?.tasks.filter((t) => t.status === "Doing").length,
+            icon: Clock3,
+            tone: "amber",
+          },
+          {
+            label: "Done",
+            value: query.data?.tasks.filter((t) => t.status === "Done").length,
+            icon: CheckCircle2,
+            tone: "green",
+          },
+        ].map(({ label, value, icon: Icon, tone }) => (
+          <div className={`hub-stat ${tone}`} key={label}>
+            <span className="hub-stat-icon">
+              <Icon size={20} />
+            </span>
+            <div>
+              <strong>{value ?? "—"}</strong>
+              <p>{label}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+      <div className="hub-toolbar">
+        <nav aria-label="Hub sections" className="hub-section-tabs">
+          <a href="#board-title" className="active">
+            <LayoutDashboard size={16} />
+            Board
+          </a>
+          <a href="#discussion">
+            <MessageSquare size={16} />
+            Discussion
+            <span className="hub-count">{query.data?.posts.length ?? 0}</span>
+          </a>
+        </nav>
         <button
-          className="btn-ghost flex items-center gap-2 !px-4 !py-3"
+          className="hub-tool-button"
           disabled={query.isFetching}
           onClick={() => void query.refetch()}
         >
-          <RefreshCw size={16} />
+          <RefreshCw
+            size={15}
+            className={query.isFetching ? "animate-spin" : ""}
+          />
           Refresh
         </button>
-      </header>
-      <div className="rounded-xl bg-secondary p-4 text-xs leading-relaxed">
-        Shared online · Updates about every 15 seconds. This Hub is currently
-        unlocked; names are self-selected. Keep sensitive information offline.
       </div>
-      <section
-        className="grid sm:grid-cols-2 gap-4"
-        aria-label="Project update"
-      >
-        <div className="studio-card border border-border p-5">
-          <h2 className="font-semibold flex gap-2 items-center">
-            <CheckCircle2 size={19} className="text-primary" />
-            Built so far
-          </h2>
-          <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-            PT/LVN home, FAQ helper, course details, text reader, practice
-            checks, preview records, and local resume. The learning preview is
-            live and awards 0 CE hours.
-          </p>
-        </div>
-        <div className="studio-card border border-border p-5">
-          <h2 className="font-semibold">Next milestones</h2>
-          <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-            Clinical review and full courses; instructor and provider
-            requirements; learner accounts, durable CE records, payments, and
-            marketing validation.
-          </p>
-        </div>
-      </section>
-      <p className="text-xs text-muted-foreground">
-        Development summary as of November 9, 2026. Use the board and discussion
-        for ongoing updates.
-      </p>
-      <div aria-live="polite" className="text-sm">
+      <details className="hub-project-brief">
+        <summary>
+          <span className="flex gap-2 items-center">
+            <Sparkles size={17} />
+            Project brief
+            <span className="hidden sm:inline font-normal text-muted-foreground">
+              {" "}
+              · What’s built & what’s next
+            </span>
+          </span>
+          <span className="text-xs font-normal text-muted-foreground">
+            View update
+          </span>
+        </summary>
+        <section
+          className="grid sm:grid-cols-2 gap-5 pt-5"
+          aria-label="Project update"
+        >
+          <div>
+            <h2 className="font-semibold text-sm flex gap-2 items-center">
+              <CheckCircle2 size={17} className="text-primary" />
+              Built so far
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              PT/LVN home, FAQ helper, course details, reader, practice checks,
+              preview records, and local resume. The live learning preview
+              awards 0 CE hours.
+            </p>
+          </div>
+          <div>
+            <h2 className="font-semibold text-sm flex gap-2 items-center">
+              <Compass size={17} className="text-primary" />
+              Next milestones
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              Clinical review, full courses, instructor/provider requirements,
+              learner accounts, durable CE records, payments, and marketing
+              validation.
+            </p>
+          </div>
+        </section>
+        <p className="text-xs text-muted-foreground mt-4">
+          Development snapshot · November 9, 2026. Ongoing updates belong on the
+          board and in discussion.
+        </p>
+      </details>
+      <div aria-live="polite" className="hub-sync text-xs">
         {query.isPending
           ? "Connecting to shared storage…"
           : query.isError
@@ -212,13 +326,6 @@ export default function Hub() {
           </p>
         )}
       </div>
-      <nav
-        aria-label="Hub sections"
-        className="flex gap-5 text-sm text-primary underline"
-      >
-        <a href="#board-title">Project board</a>
-        <a href="#discussion">Discussion & ideas</a>
-      </nav>
       <section aria-labelledby="board-title">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
           <h2
@@ -237,17 +344,71 @@ export default function Hub() {
             Add task
           </button>
         </div>
+        <div className="hub-filters">
+          <label className="hub-search">
+            <Search size={16} />
+            <input
+              aria-label="Search tasks"
+              placeholder="Search this board…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </label>
+          <label className="hub-owner-filter">
+            <SlidersHorizontal size={15} />
+            <span className="sr-only">Filter by owner</span>
+            <select
+              value={ownerFilter}
+              onChange={(e) => setOwnerFilter(e.target.value)}
+            >
+              <option>Everyone</option>
+              {owners.map((o) => (
+                <option key={o}>{o}</option>
+              ))}
+            </select>
+          </label>
+          <div
+            className="hub-category-filters"
+            role="group"
+            aria-label="Filter by category"
+          >
+            {["All", ...categories].map((c) => (
+              <button
+                key={c}
+                aria-pressed={category === c}
+                onClick={() => setCategory(c)}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p className="lg:hidden text-xs text-muted-foreground mb-3">
+          Swipe to explore the board →
+        </p>
         <div className="hub-board">
           {statuses.map((status) => {
             const tasks =
-              query.data?.tasks.filter((t) => t.status === status) ?? [];
+              query.data?.tasks.filter(
+                (t) =>
+                  t.status === status &&
+                  (category === "All" || t.category === category) &&
+                  (ownerFilter === "Everyone" || t.owner === ownerFilter) &&
+                  `${t.title} ${t.details}`
+                    .toLowerCase()
+                    .includes(search.toLowerCase()),
+              ) ?? [];
+            const StatusIcon = statusIcons[status];
             return (
               <section
                 key={status}
-                className="rounded-2xl border border-border bg-secondary/40 p-4"
+                className={`hub-column ${status === "To Do" ? "todo" : status === "Doing" ? "doing" : "done"}`}
               >
-                <h3 className="font-semibold mb-4 flex justify-between">
-                  {status}
+                <h3 className="hub-column-title">
+                  <span className="flex items-center gap-2">
+                    <StatusIcon size={18} />
+                    {status}
+                  </span>
                   <span className="text-muted-foreground text-sm">
                     {tasks.length}
                   </span>
@@ -256,8 +417,26 @@ export default function Hub() {
                   {tasks.map((t) => (
                     <article
                       key={t.id}
-                      className="rounded-xl border border-border bg-background p-4 space-y-3"
+                      className={`hub-task-card category-${t.category.toLowerCase()}`}
                     >
+                      <div className="hub-card-top">
+                        <span
+                          className={`hub-category-tag ${t.category.toLowerCase()}`}
+                        >
+                          {(() => {
+                            const Icon = categoryIcons[t.category];
+                            return <Icon size={12} />;
+                          })()}
+                          {t.category}
+                        </span>
+                        <button
+                          className="hub-edit-button"
+                          aria-label={`Edit ${t.title}`}
+                          onClick={() => openTask(t)}
+                        >
+                          <ArrowUpRight size={15} />
+                        </button>
+                      </div>
                       <button
                         onClick={() => openTask(t)}
                         className="text-left text-sm font-semibold underline-offset-4 hover:underline"
@@ -269,9 +448,19 @@ export default function Hub() {
                           {t.details}
                         </p>
                       )}
-                      <p className="text-xs text-muted-foreground">
-                        {t.category} · {t.owner}
-                      </p>
+                      <div className="hub-card-owner">
+                        <Users size={13} />
+                        <span>{t.owner}</span>
+                        <span
+                          className={`hub-mini-avatar ${t.owner === "Matthew" ? "matthew" : "iska"}`}
+                        >
+                          {t.owner === "Unassigned"
+                            ? "—"
+                            : t.owner === "Together"
+                              ? "I+M"
+                              : t.owner[0]}
+                        </span>
+                      </div>
                       {t.sourcePost && (
                         <a
                           className="text-xs text-primary underline"
@@ -307,10 +496,18 @@ export default function Hub() {
                   ))}
                   {query.data && !tasks.length && (
                     <p className="text-xs text-muted-foreground py-4">
-                      No tasks here yet.
+                      No matching tasks.
                     </p>
                   )}
                 </div>
+                <button
+                  className="hub-add-card"
+                  disabled={!query.data || pending}
+                  onClick={() => openTask(undefined, undefined, status)}
+                >
+                  <Plus size={16} />
+                  Add a card
+                </button>
               </section>
             );
           })}
@@ -319,7 +516,7 @@ export default function Hub() {
       <section
         id="discussion"
         aria-labelledby="discussion-title"
-        className="space-y-5"
+        className="hub-discussion space-y-5"
       >
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <h2
@@ -344,7 +541,7 @@ export default function Hub() {
           automatically.
         </p>
         <form
-          className="studio-card border border-border p-5 space-y-4"
+          className="hub-composer p-5 sm:p-6 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             void save(
@@ -422,7 +619,7 @@ export default function Hub() {
             <article
               id={`post-${p.id}`}
               key={p.id}
-              className="border border-border rounded-xl p-5 scroll-mt-8"
+              className="hub-post-card p-5 scroll-mt-8"
             >
               <p className="text-sm font-semibold">
                 {p.author}
@@ -450,6 +647,10 @@ export default function Hub() {
           )}
         </div>
       </section>
+      <p className="hub-access-note">
+        Unlocked workspace · Names are self-selected. Keep sensitive information
+        offline. Updates sync about every 15 seconds when connected.
+      </p>
       <Dialog
         open={!!edit}
         onOpenChange={(open) => {
